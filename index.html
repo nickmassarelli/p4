@@ -313,7 +313,7 @@
 
 <body>
 	<header class="page-title">
-		<p><a href="https://yalepubliccalendar.com/">The Yale Public Calendar</a></p>
+		<p><a href="https://yalepubliccalendar.com/">p4</a></p>
 		<button id="sidebarbutton">Add an event</button>
 	</header>
 	<div class="events js-events">
@@ -326,7 +326,7 @@
 					<input id="title" class="blue js-input" type="text" name="title" autocomplete="off" required>
 					<label for="title">Title</label>
 				</div>
-				<div class="red">
+				<!-- <div class="red">
 					<input id="date" class="red js-input" type="date" name="date" autocomplete="off" required>
 					<label for="date">Date</label>
 				</div>
@@ -352,7 +352,7 @@
 				<div class="purple">
 					<input id="link" class="purple js-input" type="url" name="link" autocomplete="off">
 					<label for="link">Website</label>
-				</div>
+				</div> -->
 				<button type="submit" class="js-submit">+ submit</button>
 			</form>
 		</div>
@@ -362,10 +362,10 @@
 					href="https://selfaware.studio/" target="_blank">Self Aware.</a></p>
 		</div>
 	</div>
-	<footer class="page-footer">
+	<!-- <footer class="page-footer">
 		<p class="text-center print-only">yalepubliccalendar.com</p>
 		<button id="infobutton">Info</button>
-	</footer>
+	</footer> -->
 
 	<script>
 		// select dom elements
@@ -375,9 +375,9 @@
 		const $submit = document.querySelector('.js-submit')
 
 		// if the browser is chrome, show the submission form
-		if (/chrome|crios|crmo/i.test(window.navigator.userAgent)) {
-			document.body.classList.add('is-chrome')
-		}
+		// if (/chrome|crios|crmo/i.test(window.navigator.userAgent)) {
+		// 	document.body.classList.add('is-chrome')
+		// }
 
 		// fetch events
 		getEvents().then(events => {
@@ -472,37 +472,6 @@
 			return `
 				<li class="event">
 					<p class="blue">${event.title}</p>
-					<p class="red indent">${event.date}</p>
-					<p class="yellow indent">${event.time}</p>
-					${event.location
-					? `<a class="green indent" href="${event.location}" target="_blank" rel="noopener noreferrer">
-								<p class="green indent screen-only">+ zoom link</p>
-								<p class="green indent print-only">+ Zoom ID: ${event.zoomId}</p>
-							</a>`
-					: ''
-				}
-					${event.description
-					? `<p class="orange">${event.description}</p>`
-					: ''
-				}
-					${event.link
-					? `<p class="indent screen-only">
-							<a class="purple" href="${event.link}" target="_blank" rel="noopener noreferrer">
-								+ website
-							</a>
-						</p>`
-					: ''
-				}
-					<p class="indent screen-only">
-						<a
-							class="purple"
-							href="${event.calandarLink}"
-							target="_blank"
-							rel="noopener noreferrer"
-						>+ add to your calendar</a>
-					</p>
-					<button class="purple indent screen-only js-print">+ print</button>
-				</li>
 			`
 		}
 	</script>
