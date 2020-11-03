@@ -2,7 +2,7 @@ const fetch = require('node-fetch')
 const { format, compareAsc } = require('date-fns')
 
 const endpoint =
-  'https://api.sheety.co/9a19cc691e17a75dcd0a6f68b6d7c2d8/yalePublicCalendar/events'
+  'https://api.sheety.co/9a19cc691e17a75dcd0a6f68b6d7c2d8/p4/sheet1'
 
 exports.handler = async (event, context) => {
   try {
