@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset='UTF-8'>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>The Yale Public Calendar</title>
+
+	<link rel="icon" href="assets/favicon.png">
+
+	<style>
+		:root {
+			--blue: #2ba2d7;
+			--red: #ec6266;
+			--yellow: #ffb317;
+			--green: #659d58;
+			--orange: #ff8607;
+			--purple: #d77ad7;
+			--gray: #999999;
+		}
+
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			text-rendering: optimizeLegibility;
+			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
+			-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+		}
+
+		body {
+			font: 30px helvetica, sans-serif;
+		}
+
+		a {
+			text-decoration: none;
+			color: inherit;
+		}
+
+		ul {
+			list-style-type: none;
+		}
+
+		button {
+			border: none;
+			border-radius: 0px;
+			margin: 0;
+			padding: 0;
+			width: auto;
+			overflow: visible;
+			background: transparent;
+			color: inherit;
+			font: inherit;
+			line-height: inherit;
+			text-align: center;
+			text-decoration: none;
+			cursor: pointer;
+			white-space: normal;
+			-webkit-font-smoothing: inherit;
+			-moz-osx-font-smoothing: inherit;
+			-webkit-appearance: none;
+			outline: unset;
+		}
+
+		input[type="time"]::-webkit-calendar-picker-indicator,
+		input[type="date"]::-webkit-calendar-picker-indicator {
+			background: none;
+		}
+
+		.page-title {
+			position: fixed;
+			left: 0;
+			top: 0;
+			border-bottom: 1px solid black;
+			background-color: white;
+			width: 100%;
+			padding: 5px 5px 5px 7px;
+			display: flex;
+		}
+
+		.page-title p:first-child {
+			width: 68%;
+		}
+
+		.page-title p:last-child {
+			width: 32%;
+		}
+
+		.page-footer {
+			position: fixed;
+			left: 0;
+			bottom: 0;
+			border-top: 1px solid black;
+			background-color: white;
+			width: 100%;
+			padding: 5px 5px 5px 7px;
+			display: flex;
+		}
+
+		.events {
+			width: 68%;
+			margin-bottom: 200px;
+			margin-top: 50px;
+			margin-left: 5px;
+			padding-right: 200px;
+			padding-left: 2px;
+		}
+
+		.event {
+			margin-bottom: 50px;
+		}
+
+		.sidebar {
+			position: fixed;
+			top: 50px;
+			right: 0;
+			padding-right: 30px;
+			width: 32%;
+		}
+
+		.submission {
+			margin-bottom: 50px;
+			display: none;
+		}
+
+		.submission-form {
+			width: 100%;
+		}
+
+		.submission-form div {
+			position: relative;
+		}
+
+		.submission-form input {
+			width: 100%;
+			border: unset;
+			background: unset;
+			-webkit-appearance: unset;
+			font: 30px helvetica, sans-serif;
+			outline: unset;
+			border-bottom: 1px solid black;
+			min-height: 46px;
+			color: transparent;
+		}
+
+		.submission-form-time-input {
+			display: flex;
+			border-bottom: 1px solid black;
+		}
+
+		.submission-form-time-input input {
+			border-bottom: none;
+		}
+
+		.submission-form label {
+			position: absolute;
+			top: 50%;
+			left: 0;
+			transform: translateY(-50%);
+			pointer-events: none;
+		}
+
+		.submission-form input:focus,
+		.submission-form input.is-focused {
+			color: inherit;
+		}
+
+		.submission-form input:focus+label,
+		.submission-form input.is-focused+label {
+			display: none;
+		}
+
+		.blue {
+			color: var(--blue);
+		}
+
+		.red {
+			color: var(--red);
+		}
+
+		.yellow {
+			color: var(--yellow);
+		}
+
+		.green {
+			color: var(--green);
+		}
+
+		.orange {
+			color: var(--orange);
+		}
+
+		.purple {
+			color: var(--purple);
+		}
+
+		.gray {
+			color: var(--gray);
+		}
+
+		.indent {
+			text-indent: 30px;
+		}
+
+		@keyframes FADE {
+			to {
+				opacity: 0;
+			}
+		}
+
+		.fade {
+			animation: FADE 5s 1;
+		}
+
+		.info {
+			display: none;
+			position: fixed;
+			bottom: 60px;
+			padding-right: 30px;
+		}
+
+		.text-center {
+			width: 100%;
+			text-align: center;
+		}
+
+		.print-only {
+			display: none;
+		}
+
+		#infobutton {
+			margin-left: 68%;
+		}
+
+		.show {
+			display: block;
+		}
+
+		/* hide sidebarbutton if browser is not chrome */
+		body:not(.is-chrome) #sidebarbutton {
+			display: none;
+		}
+
+		@media only screen and (max-width: 1020px) {
+
+			#sidebarbutton {
+				display: none;
+			}
+
+			.page-footer {
+				display: none;
+			}
+
+			.sidebar {
+				display: none;
+			}
+
+			.events {
+				width: 100%;
+				padding-right: 20px;
+			}
+
+			.page-title p:first-child {
+				width: 100%
+			}
+		}
+
+		@media print {
+
+			body {
+				font: 40px helvetica, sans-serif;
+			}
+
+			* {
+			   -webkit-print-color-adjust: exact;
+			   print-color-adjust: exact;
+			}
+
+			.print-only {
+				display: block;
+			}
+
+			.screen-only {
+				display: none;
+			}
+
+			.events {
+				width: 100%;
+				padding-right: 0;
+			}
+
+			.sidebar,
+			#sidebarbutton,
+			#infobutton {
+				display: none;
+			}
+
+			.event {
+				display: none;
+			}
+
+			.event.keep {
+				display: block;
+				padding-top: 20px;
+			}
+		}
+
+	</style>
+
+</head>
+
+<body>
+	<header class="page-title">
+		<p><a href="https://yalepubliccalendar.com/">The Yale Public Calendar</a></p>
+		<button id="sidebarbutton">Add an event</button>
+	</header>
+	<div class="events js-events">
+		<p class="gray">Loading events...</p>
+	</div>
+	<div class="sidebar">
+		<div class="submission">
+			<form class="submission-form js-form">
+				<div class="blue">
+					<input id="title" class="blue js-input" type="text" name="title" autocomplete="off" required>
+					<label for="title">Title</label>
+				</div>
+				<div class="red">
+					<input id="date" class="red js-input" type="date" name="date" autocomplete="off" required>
+					<label for="date">Date</label>
+				</div>
+				<div class="submission-form-time-input">
+					<div class="yellow">
+						<input id="startTime" class="yellow js-input" type="time" name="startTime" autocomplete="off" required>
+						<label for="startTime">Start Time</label>
+					</div>
+					<div class="yellow">
+						<input id="endTime" class="yellow js-input" type="time" name="endTime" autocomplete="off" required>
+						<label for="endTime">End Time</label>
+					</div>
+				</div>
+				<div class="green">
+					<input id="location" class="green js-input" type="url" name="location" autocomplete="off">
+					<label for="location">Zoom Link</label>
+				</div>
+				<div class="orange">
+					<input id="description" class="orange js-input" type="text" name="description" autocomplete="off"
+						maxlength="400">
+					<label for="description">Description</label>
+				</div>
+				<div class="purple">
+					<input id="link" class="purple js-input" type="url" name="link" autocomplete="off">
+					<label for="link">Website</label>
+				</div>
+				<button type="submit" class="js-submit">+ submit</button>
+			</form>
+		</div>
+		<div class="info">
+			<p>The Yale Public Calendar is an event board created in 2020 by Nick Massarelli during a Workshop led by Ryan
+				Waller at the Yale School of Art. The website was developed with the generous help of <a
+					href="https://selfaware.studio/" target="_blank">Self Aware.</a></p>
+		</div>
+	</div>
+	<footer class="page-footer">
+		<p class="text-center print-only">yalepubliccalendar.com</p>
+		<button id="infobutton">Info</button>
+	</footer>
+
+	<script>
+		// select dom elements
+		const $events = document.querySelector('.js-events')
+		const $form = document.querySelector('.js-form')
+		const $inputs = Array.from(document.querySelectorAll('.js-input'))
+		const $submit = document.querySelector('.js-submit')
+
+		// if the browser is chrome, show the submission form
+		if (/chrome|crios|crmo/i.test(window.navigator.userAgent)) {
+			document.body.classList.add('is-chrome')
+		}
+
+		// fetch events
+		getEvents().then(events => {
+			// generate events list html and insert into dom
+			$events.innerHTML = `<ul>${events.map(eventTemplate).join('')}</ul>`
+
+			// handle print button clicks
+			Array.from($events.querySelectorAll('.js-print')).forEach(btn => {
+				btn.addEventListener('click', function () {
+					let $item = this.parentNode
+					let $items = Array.from($item.parentNode.children)
+					$items.forEach(el => el.classList.remove('keep'))
+					$item.classList.add('keep')
+					window.print()
+				})
+			})
+		})
+
+		// info toggle
+		document.querySelector('#infobutton').addEventListener('click', () => {
+			document.querySelector('.info').classList.toggle('show')
+		})
+
+		// submission toggle
+		document.querySelector('#sidebarbutton').addEventListener('click', () => {
+			document.querySelector('.submission').classList.toggle('show')
+		})
+
+		// form input placeholders
+		$inputs.forEach($input => {
+			$input.addEventListener('focusout', () => {
+				if ($input.value.length) {
+					$input.classList.add('is-focused')
+				} else {
+					$input.classList.remove('is-focused')
+				}
+			})
+		})
+
+		// handle form submissions
+		$form.addEventListener('submit', (ev) => {
+			ev.preventDefault()
+
+			$submit.textContent = 'sending...'
+			$submit.style.pointerEvents = 'none'
+
+			submitEvent($form).then((res) => {
+				$form.reset()
+				$inputs.forEach($input => $input.classList.remove('is-focused'))
+				$submit.textContent = '+ send'
+				$submit.style.pointerEvents = null
+
+				const $success = document.createElement('p')
+				$success.textContent = 'done, reload the page'
+				$success.classList.add('indent')
+				$success.classList.add('fade')
+
+				$success.addEventListener('animationend', () => {
+					$success.remove()
+				}, { once: true })
+
+				$form.parentNode.appendChild($success)
+			}).catch(error => {
+				console.log('Error!', error)
+			})
+		})
+
+		function getEvents() {
+			return fetch('/.netlify/functions/getEvents')
+				.then((res) => res.json())
+				.catch(error => console.log('Error!', error))
+		}
+
+		function submitEvent(el) {
+			const formData = new FormData(el)
+			const obj = {}
+			obj.approved = true
+			formData.forEach((value, key) => {
+				obj[key] = value
+			})
+
+			return fetch('https://api.sheety.co/9a19cc691e17a75dcd0a6f68b6d7c2d8/yalePublicCalendar/events', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ event: obj })
+			})
+		}
+
+		function eventTemplate(event) {
+			return `
+				<li class="event">
+					<p class="blue">${event.title}</p>
+					<p class="red indent">${event.date}</p>
+					<p class="yellow indent">${event.time}</p>
+					${event.location
+					? `<a class="green indent" href="${event.location}" target="_blank" rel="noopener noreferrer">
+								<p class="green indent screen-only">+ zoom link</p>
+								<p class="green indent print-only">+ Zoom ID: ${event.zoomId}</p>
+							</a>`
+					: ''
+				}
+					${event.description
+					? `<p class="orange">${event.description}</p>`
+					: ''
+				}
+					${event.link
+					? `<p class="indent screen-only">
+							<a class="purple" href="${event.link}" target="_blank" rel="noopener noreferrer">
+								+ website
+							</a>
+						</p>`
+					: ''
+				}
+					<p class="indent screen-only">
+						<a
+							class="purple"
+							href="${event.calandarLink}"
+							target="_blank"
+							rel="noopener noreferrer"
+						>+ add to your calendar</a>
+					</p>
+					<button class="purple indent screen-only js-print">+ print</button>
+				</li>
+			`
+		}
+	</script>
+</body>
+
+</html>
