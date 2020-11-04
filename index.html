@@ -313,7 +313,7 @@
 
 <body>
 	<header class="page-title">
-		<p><a href="https://yalepubliccalendar.com/">p4</a></p>
+		<p><a href="https://yalepubliccalendar.com/">The Yale Public Calendar</a></p>
 		<button id="sidebarbutton">Add an event</button>
 	</header>
 	<div class="events js-events">
@@ -459,13 +459,10 @@
 				obj[key] = value
 			})
 
-			return fetch('https://api.sheety.co/9a19cc691e17a75dcd0a6f68b6d7c2d8/p4/sheet1', {
+			return fetch('https://api.sheety.co/9a19cc691e17a75dcd0a6f68b6d7c2d8/yalePublicCalendar/sheet2', {
 				method: 'POST',
-				// https://glitteringglobofwisdom.com/circumventing-cors-with-netlify-functions-nodejs/
 				headers: {
 					'Content-Type': 'application/json',
-					'Access-Control-Allow-Origin': '*',
-					// 'Access-Control-Allow-Methods': 'GET, POST, PUT',
 				},
 				body: JSON.stringify({ event: obj })
 			})
