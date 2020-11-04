@@ -459,10 +459,13 @@
 				obj[key] = value
 			})
 
-			return fetch('https://api.sheety.co/9a19cc691e17a75dcd0a6f68b6d7c2d8/yalePublicCalendar/events', {
+			return fetch('https://api.sheety.co/9a19cc691e17a75dcd0a6f68b6d7c2d8/p4/sheet1', {
 				method: 'POST',
+				// https://glitteringglobofwisdom.com/circumventing-cors-with-netlify-functions-nodejs/
 				headers: {
 					'Content-Type': 'application/json',
+					'Access-Control-Allow-Origin': '*',
+					// 'Access-Control-Allow-Methods': 'GET, POST, PUT',
 				},
 				body: JSON.stringify({ event: obj })
 			})
